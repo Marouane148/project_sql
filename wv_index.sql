@@ -1,23 +1,55 @@
--- Création d'un index sur les pseudos des joueurs pour accélérer les recherches
-CREATE INDEX idx_players_pseudo ON players (pseudo);
-GO
+-- Mise à jour du schéma de la base de données
+/*
+les modifications apportées sont les suivantes :
+- Ajout des contraintes de clés étrangères et de clés primaires, not null, DEFAULT CURRENT_TIMESTAMP
+- base de données pour tester les requêtes : tp_mssql, (CREATE DATABASE IF NOT EXISTS tp_mssql;)
+*/
 
--- Création d'un index sur le titre des parties pour accélérer les recherches
-CREATE INDEX idx_parties_title ON parties (title_party);
-GO
+CREATE TABLE parties (
+    id_party INT PRIMARY KEY IDENTITY(1,1),
+    title_party VARCHAR(255) NOT NULL
+);
 
--- Index sur la table `players_in_parties` pour optimiser les recherches par joueur et partie
-CREATE INDEX idx_players_in_parties ON players_in_parties (id_player, id_party);
-GO
+CREATE TABLE roles (
+    id_role INT PRIMARY KEY IDENTITY(100,1),
+    description_role VARCHAR(255) NOT NULL
+);
 
--- Index sur la table `players_play` pour accélérer les recherches par joueur et tour
-CREATE INDEX idx_players_play ON players_play (id_player, id_turn);
-GO
+CREATE TABLE players (
+    id_player INT PRIMARY KEY IDENTITY(200,1),
+    pseudo VARCHAR(255) NOT NULL
+);
 
--- Index sur la table `turns` pour accélérer les recherches des tours par partie
-CREATE INDEX idx_turns_party ON turns (id_party, start_time);
-GO
+CREATE TABLE players_in_parties (
+    id_party INT NOT NULL,
+    id_player INT NOT NULL,
+    id_role INT NOT NULL,
+    is_alive VARCHAR(255) NOT NULL,
+    PRIMARY KEY (id_party, id_player),
+    FOREIGN KEY (id_party) REFERENCES parties(id_party),
+    FOREIGN KEY (id_player) REFERENCES players(id_player),
+    FOREIGN KEY (id_role) REFERENCES roles(id_role)
+);
 
--- Index pour optimiser la récupération des actions d’un joueur dans une partie
-CREATE INDEX idx_players_play_action ON players_play (id_player, action);
-GO
+CREATE TABLE turns (
+    id_turn INT PRIMARY KEY IDENTITY(300,1),
+    id_party INT NOT NULL,
+    start_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    end_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_party) REFERENCES parties(id_party)
+);
+
+CREATE TABLE players_play (
+    id_player INT NOT NULL,
+    id_turn INT NOT NULL,
+    start_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    end_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    action VARCHAR(10) NOT NULL,
+    origin_position_col VARCHAR(255) NOT NULL,
+    origin_position_row VARCHAR(255) NOT NULL,
+    target_position_col VARCHAR(255) NOT NULL,
+    target_position_row VARCHAR(255) NOT NULL,
+    PRIMARY KEY (id_player, id_turn),
+    FOREIGN KEY (id_player) REFERENCES players(id_player),
+    FOREIGN KEY (id_turn) REFERENCES turns(id_turn)
+);
