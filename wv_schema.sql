@@ -1,45 +1,40 @@
-CREATE TABLE parties (
-    id_party INT PRIMARY KEY,
-    title_party VARCHAR(100)
+create table parties (
+    id_party int,
+    title_party text
 );
 
-CREATE TABLE roles (
-    id_role INT PRIMARY KEY,
-    description_role TEXT
+create table roles (
+    id_role int,
+    description_role text
 );
 
-CREATE TABLE players (
-    id_player INT PRIMARY KEY,
-    pseudo VARCHAR(100)
+create table players (
+    id_player int,
+    pseudo text
 );
 
-CREATE TABLE players_in_parties (
-    id_party INT,
-    id_player INT,
-    id_role INT,
-    is_alive VARCHAR(3),
-    FOREIGN KEY (id_party) REFERENCES parties(id_party),
-    FOREIGN KEY (id_player) REFERENCES players(id_player),
-    FOREIGN KEY (id_role) REFERENCES roles(id_role)
+create table players_in_parties (
+    id_party int,
+    id_player int,
+    id_role int,
+    is_alive text
 );
 
-CREATE TABLE turns (
-    id_turn INT PRIMARY KEY,
-    id_party INT,
-    start_time DATETIME,
-    end_time DATETIME,
-    FOREIGN KEY (id_party) REFERENCES parties(id_party)
+create table turns (
+    id_turn int,
+    id_party int,
+    start_time datetime,
+    end_time datetime
 );
 
-CREATE TABLE players_play (
-    id_player INT,
-    id_turn INT,
-    action VARCHAR(10),
-    origin_position_col INT,
-    origin_position_row INT,
-    target_position_col INT,
-    target_position_row INT,
-    PRIMARY KEY (id_player, id_turn),
-    FOREIGN KEY (id_player) REFERENCES players(id_player),
-    FOREIGN KEY (id_turn) REFERENCES turns(id_turn)
+create table players_play (
+    id_player int,
+    id_turn int,
+    start_time datetime,
+    end_time datetime,
+    action varchar(10),
+    origin_position_col text,
+    origin_position_row text,
+    target_position_col text,
+    target_position_row text
 );
