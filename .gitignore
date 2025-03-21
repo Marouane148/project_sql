@@ -1,5 +1,0 @@
-*log
-*bak
-*.sql
-node_modules/
-.env
